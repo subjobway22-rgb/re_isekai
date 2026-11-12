@@ -100,3 +100,7 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .form{display:flex;flex-direction:column;gap:6px;text-align:left;margin-top:4px}
 .form label{display:flex;flex-direction:column;gap:2px;font-size:12px}
 .form input,.form select,.form textarea{padding:6px;border:3px solid var(--dk);border-radius:6px;background:var(--cream);color:var(--dk)}
+
+.logo{font-size:40px;color:var(--yel);text-shadow:3px 3px 0 #5a3a22,-1px -1px 0 #5a3a22;letter-spacing:2px;margin-bottom:4px}
+.msg{min-height:18px;font-size:13px;color:#ffb0a0}
+.note{text-align:center;opacity:.7;line-height:1.5}

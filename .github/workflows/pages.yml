@@ -1,0 +1,30 @@
+name: Deploy Pages
+on:
+  push:
+    branches: [main, claude/gifted-newton-5fuzq9]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.d.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp -r index.html css js assets _site/
+          rm -rf _site/assets/ui/raw
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: d
+        uses: actions/deploy-pages@v4

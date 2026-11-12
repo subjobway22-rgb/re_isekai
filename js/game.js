@@ -28,7 +28,6 @@ const BOT_PARTNERS=['하루','미유','세이라','리나','유키','아이리',
 const BOT_LINES=['같이 힘내자!','오늘도 화이팅~','잘 부탁드려요!','최애는 역시 우리 애!','모험은 즐거워!'];
 
 /* ================= 상태 ================= */
-const SAVE_KEY='reisekai_save_v1';
 function newState(){return{v:1,name:'',cls:0,partner:null,gold:0,gems:900,stones:5,rerolls:2,bond:0,stars:0,stage:1,kills:0,best:1,
   up:{atk:0,as:0,crit:0,cdmg:0,hp:0},weapon:0,inv:[],eq:[null,null,null,null,null],pity:0,uid:1,bossAuto:true,kpm:12,last:Date.now(),
   buffs:[],enc:{day:'',count:0,next:25},friends:[],dq:{day:'',kills:0,ups:0,summon:0,enc:0,claimed:[]},freeDay:'',totalKills:0,log:[],met:0};}
@@ -36,9 +35,8 @@ let S=newState();
 const G={started:false,mon:null,heroHp:1,heroDead:0,atkT:0,lunge:0,skillT:6,wait:.5,bossT:0,scroll:0,time:0,flash:0,modal:0,kwin:0,kwinT:0,bossNow:false,bossBlocked:false,idleT:12,lowSaid:false,mhit:0};
 let dirty=true,_st=null;
 const today=()=>new Date().toISOString().slice(0,10);
-function save(){try{S.last=Date.now();localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
-function load(){try{const j=localStorage.getItem(SAVE_KEY);if(!j)return false;const o=JSON.parse(j);S=Object.assign(newState(),o);S.up=Object.assign(newState().up,o.up||{});S.dq=Object.assign(newState().dq,o.dq||{});S.enc=Object.assign(newState().enc,o.enc||{});return !!S.partner;}catch(e){return false;}}
-function resetSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.reload();}
+function save(){if(Cloud.ready){S.last=Date.now();Cloud.save(S);}}
+function mergeState(o){const n=newState();const r=Object.assign(n,o);r.up=Object.assign(n.up,o.up||{});r.dq=Object.assign(newState().dq,o.dq||{});r.enc=Object.assign(newState().enc,o.enc||{});return r;}
 
 function fmt(n){n=Math.floor(n);if(n<1000)return''+n;const u=['','K','M','B','T','Qa','Qi'];let i=0,v=n;while(v>=1000&&i<u.length-1){v/=1000;i++;}return (v>=100?v.toFixed(0):v>=10?v.toFixed(1):v.toFixed(2))+u[i];}
 const rnd=(a,b)=>a+Math.random()*(b-a),ri=a=>Math.floor(Math.random()*a),pick=a=>a[ri(a.length)];
@@ -242,5 +240,5 @@ function frame(now){const dt=Math.min(.1,(now-_last)/1000);_last=now;
   }catch(e){console.error(e);}
   requestAnimationFrame(frame);}
 window.addEventListener('resize',resize);
-document.addEventListener('visibilitychange',()=>{if(document.hidden){save();}else if(G.started){const sec=(Date.now()-S.last)/1000;if(sec>60){const r=offlineReward(sec);if(r&&window.UI)UI.offline(r);}}});
-window.addEventListener('beforeunload',save);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){save();Cloud.flush(true);}else if(G.started){const sec=(Date.now()-S.last)/1000;if(sec>60){const r=offlineReward(sec);if(r&&window.UI)UI.offline(r);}}});
+window.addEventListener('beforeunload',()=>{Cloud.flush(true);});

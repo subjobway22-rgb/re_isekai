@@ -119,8 +119,8 @@ const UI={tab:'adv',sel:null,mult:1,pdown:false,t5:0,t1:0,lastHtml:'',
     if(k==='quest'){const render=()=>QUESTS.map(q=>{const v=Math.min(S.dq[q.k],q.need),done=S.dq.claimed.includes(q.id),ok=v>=q.need&&!done;return `<div class="row2"><div class="tx"><b>${q.n}</b><br><small>${v}/${q.need} · 💎${q.gem}</small></div><button class="btn ${ok?'':'off'}" data-m="${q.id}">${done?'완료':'받기'}</button></div>`;}).join('');
       const m=this.modal(`<h3>일일 퀘스트</h3><div id="ql">${render()}</div><button class="btn" data-m="close">닫기</button>`,{on:(id)=>{if(claimQuest(id)){this.toast('💎 보상 획득!');m.querySelector('#ql').innerHTML=render();save();}}});return;}
     if(k==='codex'){this.modal(`<h3>인연 도감</h3><div class="card sm">지금까지 만난 플레이어 <b>${S.met}</b>명<br><small>(프로토타입: NPC 분신이 대신 찾아옵니다)</small></div><h4>친구 ${S.friends.length}명</h4>${S.friends.map(f=>`<div class="row2">${sprEl(f.app,2,0)}<div class="tx"><b>${esc(f.name)}</b><br><small>파트너 ${esc(f.pName)}</small></div></div>`).join('')||'<small>아직 친구가 없어요. 조우할 때 친구 신청을 해보세요!</small>'}<button class="btn" data-m="close">닫기</button>`);return;}
-    if(k==='set'){this.modal(`<h3>설정</h3><div class="grid2"><button class="btn" data-m="enc">조우 테스트</button><button class="btn" data-m="st">스테이지 +10</button><button class="btn" data-m="gold">골드 +100만</button><button class="btn" data-m="gem">젬 +3000</button><button class="btn" data-m="reset">데이터 초기화</button><button class="btn" data-m="close">닫기</button></div><small>⚠ 테스트용 메뉴(개발 중)</small>`,
-      {on:(id,el,close)=>{if(id==='enc'){close();setTimeout(()=>this.encounter(),50);}else if(id==='st'){S.stage+=10;S.kills=0;G.mon=null;toast('스테이지 '+S.stage);}else if(id==='gold'){S.gold+=1e6;}else if(id==='gem'){S.gems+=3000;}else if(id==='reset'&&confirm('모든 데이터를 삭제할까요?'))resetSave();}});}
+    if(k==='set'){this.modal(`<h3>설정</h3><div class="grid2"><button class="btn" data-m="enc">조우 테스트</button><button class="btn" data-m="st">스테이지 +10</button><button class="btn" data-m="gold">골드 +100만</button><button class="btn" data-m="gem">젬 +3000</button><button class="btn" data-m="reset">처음부터 다시</button><button class="btn" data-m="out">로그아웃</button><button class="btn" data-m="close">닫기</button></div><small>⚠ 테스트용 메뉴(개발 중)</small>`,
+      {on:(id,el,close)=>{if(id==='enc'){close();setTimeout(()=>this.encounter(),50);}else if(id==='st'){S.stage+=10;S.kills=0;G.mon=null;toast('스테이지 '+S.stage);}else if(id==='gold'){S.gold+=1e6;}else if(id==='gem'){S.gems+=3000;}else if(id==='out'){Promise.resolve(Cloud.save(S)).then(()=>Cloud.flush(false)).then(()=>location.reload());}else if(id==='reset'&&confirm('이 계정의 모험 기록을 지우고 처음부터 다시 시작할까요?')){close();S=newState();S.name=Cloud.name;G.started=false;G.mon=null;this.opening();}}});}
   },
   /* ---------- 조우 / 방치 ---------- */
   encounter(type){const r=encounter(type),b=r.bot;save();
@@ -160,6 +160,28 @@ const UI={tab:'adv',sel:null,mult:1,pdown:false,t5:0,t1:0,lastHtml:'',
       colRows.forEach(([k])=>m.querySelectorAll('#cs-'+k+' i').forEach(i=>i.classList.toggle('on',i.dataset.m.endsWith(P.app.col[k]))));}
     const iv=setInterval(()=>{if(!m.parentNode){clearInterval(iv);return;}frm^=1;refresh();},450);refresh();return m;
   },
+  /* ---------- 로비(로그인) ---------- */
+  lobby(){
+    let last='';try{last=localStorage.getItem('reisekai_last')||'';}catch(e){}
+    const m=this.modal(`<div class="cut"><h1 class="logo">리:이세계</h1><div class="dlg">트럭에 치인 뒤, 눈을 떠보니 편의점 앞이었다.<br><small>처음이라면 이름과 비밀번호로 새 모험이 시작돼요.</small></div>
+      <input id="ln" maxlength="8" placeholder="이름 (2~8자)" value="${esc(last)}" autocomplete="off"><input id="lp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="비밀번호 숫자 4자리" autocomplete="off">
+      <div id="lm" class="msg"></div><button class="btn wide" data-m="go">접속하기</button>
+      <small class="note">${CONFIG.API?'☁ 기록은 암호화되어 서버(GitHub)에 저장돼요':'💾 서버 미연결: 이 기기(브라우저)에만 암호화 저장돼요'}<br>비밀번호를 잊으면 복구할 수 없어요.</small></div>`,
+      {full:true,cls:'cutbox',on:(id)=>{if(id==='go')go();}});
+    const msg=t=>{m.querySelector('#lm').textContent=t;};
+    const go=async()=>{const name=m.querySelector('#ln').value.trim(),pin=m.querySelector('#lp').value;
+      if(name.length<2||name.length>8)return msg('이름은 2~8자로 입력하세요');
+      if(bannedHit(name))return msg('사용할 수 없는 이름이에요');
+      if(!/^\d{4}$/.test(pin))return msg('비밀번호는 숫자 4자리예요');
+      msg('접속 중…');const btn=m.querySelector('[data-m=go]');btn.classList.add('off');
+      try{const res=await Cloud.login(name,pin);try{localStorage.setItem('reisekai_last',name);}catch(e){}m.close();this.enter(res,name);}
+      catch(e){btn.classList.remove('off');msg({badpw:'이름 또는 비밀번호가 틀렸어요',locked:'시도가 너무 많아요. 잠시 후 다시 해주세요',net:'서버에 연결할 수 없어요'}[e&&e.code]||'오류가 발생했어요');console.error(e);}};
+    m.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')go();}));
+  },
+  enter(res,name){
+    if(res.status==='new'){S=newState();S.name=name;this.opening();}
+    else{S=mergeState(res.state);S.name=name;checkDay();const sec=(Date.now()-S.last)/1000;this.startGame();const r=offlineReward(sec);if(r)this.offline(r);}
+  },
   /* ---------- 오프닝 ---------- */
   opening(){
     const steps=[{t:'빠아아아앙——!!!',k:'black',shake:1},{t:'…쾅.',k:'black'},{t:'……여긴 어디지?',k:'store'},{t:'나는 분명 트럭에 치이고… 편의점 앞에서 정신을 잃었는데…',k:'store'},{t:'……이, 이세계?!',k:'store',shake:1}];
@@ -173,7 +195,7 @@ const UI={tab:'adv',sel:null,mult:1,pdown:false,t5:0,t1:0,lastHtml:'',
       const t=m.querySelector('#ct');t.textContent=s.t;cc.classList.toggle('shake',!!s.shake);};
     const iv=setInterval(()=>{sign=!sign;if(m.parentNode)draw();else clearInterval(iv);},500);
     draw();
-    m.addEventListener('click',()=>{i++;if(i>=steps.length){clearInterval(iv);m.close();this.nameStep();}else draw();});
+    m.addEventListener('click',()=>{i++;if(i>=steps.length){clearInterval(iv);m.close();this.classStep();}else draw();});
   },
   nameStep(){const m=this.modal(`<div class="cut"><h3>이름을 알려줘</h3><div class="dlg"><div>“……내 이름은…”</div></div><input id="nm" maxlength="8" placeholder="2~8자" autofocus><button class="btn wide" data-m="ok">다음</button></div>`,{full:true,cls:'cutbox',on:(id)=>{const v=$('#nm').value.trim();if(v.length<2||v.length>8)return this.toast('이름은 2~8자로 입력하세요');if(bannedHit(v))return this.toast('사용할 수 없는 이름이에요');S.name=v;m.close();this.classStep();}});},
   classStep(){let sel=0;const m=this.modal(`<h3>어떤 모습으로 모험할까?</h3><div class="cls">${CLASSES.map((c,i)=>`<div class="ccard ${i===0?'on':''}" data-m="cl-${i}">${sprEl(c.app,4,0)}<b>${c.n}</b><small>${c.desc}</small></div>`).join('')}</div><button class="btn wide" data-m="ok">결정</button>`,{full:true,cls:'cutbox',
@@ -186,8 +208,7 @@ const UI={tab:'adv',sel:null,mult:1,pdown:false,t5:0,t1:0,lastHtml:'',
     $('#content').addEventListener('click',e=>{const d=e.target.closest('[data-a]');if(d)this.act(d.dataset.a,d);});
     $('#field').addEventListener('click',e=>{const d=e.target.closest('[data-s]');if(d)this.side(d.dataset.s);});
     document.addEventListener('pointerdown',()=>this.pdown=true);['pointerup','pointercancel'].forEach(t=>document.addEventListener(t,()=>this.pdown=false));
-    if(load()){checkDay();const sec=(Date.now()-S.last)/1000;this.startGame();const r=offlineReward(sec);if(r)this.offline(r);}
-    else this.opening();
+    this.lobby();
     requestAnimationFrame(frame);
   }
 };

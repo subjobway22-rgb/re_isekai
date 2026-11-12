@@ -8,7 +8,11 @@
 ```bash
 python3 -m http.server 8000   # → http://localhost:8000
 ```
-(`index.html`을 직접 열어도 동작합니다. 저장은 브라우저 LocalStorage)
+(`index.html`을 직접 열어도 동작합니다)
+
+## 웹에서 플레이 / 저장
+- 배포: GitHub Pages (`.github/workflows/pages.yml`) · 설정법은 [`docs/DEPLOY.md`](docs/DEPLOY.md)
+- 로그인: 이름 + 숫자 4자리 비밀번호 → 기록을 **브라우저에서 암호화**해서 저장 (서버 연결 시 Worker가 GitHub `saves` 브랜치에 커밋)
 
 ## 구현된 것
 - 오프닝(트럭 → 편의점 앞 "여긴 어디지?") → 이름 → 캐릭터 4종 → **파트너 생성**(도트 파츠 조합 + 색상 변경 + 이름/성격/대사 직접 입력)
