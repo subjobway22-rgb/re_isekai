@@ -1,0 +1,202 @@
+{
+ "panel_wood_sheet": [
+  388,
+  269
+ ],
+ "dialog_box": [
+  455,
+  247
+ ],
+ "ribbon_banner": [
+  428,
+  100
+ ],
+ "btn_yellow_s": [
+  139,
+  77
+ ],
+ "btn_yellow_s_pressed": [
+  135,
+  75
+ ],
+ "btn_dark_s": [
+  132,
+  75
+ ],
+ "bar_currency": [
+  384,
+  78
+ ],
+ "btn_yellow": [
+  211,
+  90
+ ],
+ "btn_beige": [
+  235,
+  90
+ ],
+ "bar_hp_monster": [
+  405,
+  63
+ ],
+ "bar_hp_boss": [
+  480,
+  57
+ ],
+ "bar_empty_grey": [
+  419,
+  63
+ ],
+ "bar_boss_red": [
+  475,
+  62
+ ],
+ "icon_gold": [
+  86,
+  83
+ ],
+ "icon_gem": [
+  84,
+  78
+ ],
+ "icon_stone_enhance": [
+  86,
+  86
+ ],
+ "icon_stone_reroll": [
+  82,
+  85
+ ],
+ "icon_star": [
+  102,
+  91
+ ],
+ "icon_energy": [
+  86,
+  84
+ ],
+ "icon_ore": [
+  88,
+  84
+ ],
+ "icon_ring_item": [
+  85,
+  84
+ ],
+ "icon_cookie": [
+  86,
+  84
+ ],
+ "menu_store": [
+  91,
+  89
+ ],
+ "menu_book": [
+  91,
+  88
+ ],
+ "nav_growth": [
+  101,
+  97
+ ],
+ "nav_accessory": [
+  104,
+  96
+ ],
+ "nav_accessory_alt": [
+  103,
+  96
+ ],
+ "nav_adventure": [
+  102,
+  96
+ ],
+ "nav_misc": [
+  101,
+  96
+ ],
+ "nav_partner": [
+  102,
+  96
+ ],
+ "nav_shop": [
+  100,
+  97
+ ],
+ "nav_shop_alt": [
+  99,
+  96
+ ],
+ "slot_g1_common": [
+  108,
+  109
+ ],
+ "slot_g2_uncommon": [
+  112,
+  110
+ ],
+ "slot_g3_rare": [
+  112,
+  110
+ ],
+ "slot_g5_legend": [
+  109,
+  110
+ ],
+ "slot_equip_a": [
+  106,
+  103
+ ],
+ "slot_equip_b": [
+  110,
+  102
+ ],
+ "slot_equip_c": [
+  110,
+  102
+ ],
+ "slot_g6_mythic": [
+  107,
+  102
+ ],
+ "menu_quest": [
+  91,
+  89
+ ],
+ "menu_rank": [
+  91,
+  89
+ ],
+ "menu_gift": [
+  91,
+  89
+ ],
+ "menu_calendar": [
+  92,
+  88
+ ],
+ "menu_mail": [
+  91,
+  88
+ ],
+ "menu_settings": [
+  91,
+  88
+ ],
+ "panel_wood": [
+  757,
+  713
+ ],
+ "btn_yellow_hi": [
+  407,
+  227
+ ],
+ "btn_yellow_pressed_hi": [
+  422,
+  227
+ ],
+ "btn_beige_hi": [
+  411,
+  227
+ ]
+}
